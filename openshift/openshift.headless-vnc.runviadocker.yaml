@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: headless-vnc-build-and-run
+  template: headless-vnc-run
 metadata:
   annotations:
-    description: Headless VNC (build & run)
+    description: Headless VNC run
     iconClass: icon-beaker
     tags: headless,vnc,consol
     version: 1.0.3
   creationTimestamp: null
-  name: headless-vnc-build-and-run
+  name: headless-vnc-run
 objects:
 - apiVersion: "v1"
   kind: "PersistentVolumeClaim"
@@ -63,35 +63,122 @@ objects:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
 - apiVersion: v1
-  kind: BuildConfig
+  kind: DeploymentConfig
   metadata:
     labels:
       application: ${APPLICATION_NAME}
     name: ${APPLICATION_NAME}
   spec:
-    output:
-      to:
-        kind: ImageStreamTag
-        name: ${APPLICATION_NAME}:latest
-    source:
-      git:
-        ref: ${SOURCE_REPOSITORY_REF}
-        uri: ${SOURCE_REPOSITORY_URL}
-      type: Git
+    replicas: 1
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
     strategy:
-      type: Docker
-      dockerStrategy:
-        dockerfilePath: ${SOURCE_DOCKERFILE}
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          application: ${APPLICATION_NAME}
+          deploymentConfig: ${APPLICATION_NAME}
+        name: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - name: ${APPLICATION_NAME}
+          image: ${IMAGE}
+          imagePullPolicy: Always
+          ports:
+          - containerPort: 5901
+            name: vnc
+            protocol: TCP
+          - containerPort: 6901
+            name: http
+            protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 6901
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 6901
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
     triggers:
-    - github:
-        secret: ${GITHUB_WEBHOOK_SECRET}
-      type: GitHub
-    - generic:
-        secret: ${GENERIC_WEBHOOK_SECRET}
-      type: Generic
-    - imageChange: {}
-      type: ImageChange
     - type: ConfigChange
+parameters:
+- description: The name for the application.
+  name: APPLICATION_NAME
+  required: true
+  value: headless-vnc
+- description: 'Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>'
+  name: HOSTNAME_HTTP
+- description: Headless vnc image
+  name: IMAGE
+  required: true
+  value: consol/centos-xfce-vnc:dev
+apiVersion: v1
+kind: Template
+labels:
+  template: headless-vnc-run
+metadata:
+  annotations:
+    description: Headless VNC (only run)
+    iconClass: icon-beaker
+    tags: headless,vnc,consol
+    version: 1.0.3
+  creationTimestamp: null
+  name: headless-vnc-run
+objects:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      description: Headless vnc and http port
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - name: http-port-tcp
+      protocol: TCP
+      port: 6901
+      targetPort: 6901
+    - name: vnc-port-tcp
+      protocol: TCP
+      port: 5901
+      targetPort: 5901
+    selector:
+      deploymentConfig: ${APPLICATION_NAME}
+- apiVersion: v1
+  id: ${APPLICATION_NAME}-http
+  kind: Route
+  metadata:
+    annotations:
+      description: Route for vnc's http service.
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    host: ${HOSTNAME_HTTP}
+    to:
+      name: ${APPLICATION_NAME}
+    port:
+      targetPort: http-port-tcp
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    labels:
+      application: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
@@ -113,7 +200,7 @@ objects:
       spec:
         containers:
         - name: ${APPLICATION_NAME}
-          image: ${APPLICATION_NAME}
+          image: ${IMAGE}
           imagePullPolicy: Always
           ports:
           - containerPort: 5901
@@ -151,45 +238,19 @@ objects:
           persistentVolumeClaim:
             claimName: ${APPLICATION_NAME}
     triggers:
-    - imageChangeParams:
-        automatic: true
-        containerNames:
-        - ${APPLICATION_NAME}
-        from:
-          kind: ImageStreamTag
-          name: ${APPLICATION_NAME}:latest
-      type: ImageChange
     - type: ConfigChange
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: <application-name>-<project>.<default-domain-suffix>'
+- description: 'Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>'
   name: HOSTNAME_HTTP
-- description: Git source URI for application
-  name: SOURCE_REPOSITORY_URL
+- description: Headless vnc image
+  name: IMAGE
   required: true
-  value: https://github.com/oovn/oo-headless-vnc.git
-- description: Git branch/tag reference
-  name: SOURCE_REPOSITORY_REF
-  value: "master"
-- description: Name of the Dockerfile for e.g. Dockerfile.ubuntu.xfce.vnc
-  name: SOURCE_DOCKERFILE
-  value: Dockerfile.ubuntu.xfce.vnc
-- description: GitHub trigger secret
-  from: '[a-zA-Z0-9]{8}'
-  generate: expression
-  name: GITHUB_WEBHOOK_SECRET
-  required: true
-- description: Generic build trigger secret
-  from: '[a-zA-Z0-9]{8}'
-  generate: expression
-  name: GENERIC_WEBHOOK_SECRET
-  required: true
+  value: consol/centos-xfce-vnc:dev
 - description: Volume space available for data, e.g. 512Mi, 2Gi.
   name: VOLUME_CAPACITY
   value: 10Gi
   required: true
-

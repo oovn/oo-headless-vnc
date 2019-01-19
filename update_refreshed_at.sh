@@ -2,7 +2,7 @@
 ### updates the `REFRESHED_AT` env to the current day
 
 searchdir="$(dirname $0)"
-refreshDate=$(date +%Y-%m-%d)
+refreshDate=$(date +%Y%m%d)
 
 find $searchdir -type f -name 'Dockerfile*' | while read file ; do \
     sed -i -e "s/^ENV REFRESHED_AT.*/ENV REFRESHED_AT $refreshDate/" $file  \
