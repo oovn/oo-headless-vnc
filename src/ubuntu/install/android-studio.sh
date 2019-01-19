@@ -8,4 +8,4 @@ apt-get update
 apt-get install -y snap
 apt-get clean -y
 # via snap
-snap install android-studio --classic
+sudo snap install android-studio --classic
