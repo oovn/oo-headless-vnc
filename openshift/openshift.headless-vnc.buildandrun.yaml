@@ -164,7 +164,8 @@ parameters:
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>
+- description: 'Custom hostname for http service route.  Leave blank for default hostname,
+    e.g.: <application-name>-<project>.<default-domain-suffix>'
   name: HOSTNAME_HTTP
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
@@ -172,10 +173,10 @@ parameters:
   value: https://github.com/oovn/oo-headless-vnc.git
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
-  value: master
-- description: Name of the Dockerfile for e.g. Dockerfile.ubuntu.xfce.vnc
+  value: "master"
+- description: Name of the Dockerfile for example Dockerfile.ubuntu.xfce.vnc, Dockerfile.centos.icewm.vnc, Dockerfile.ubuntu.icewm.vnc or Dockerfile.centos.xfce.vnc
   name: SOURCE_DOCKERFILE
-  value: Dockerfile.ubuntu.xfce.vnc
+  value: Dockerfile.ubuntu.xfce.vnc.all
 - description: GitHub trigger secret
   from: '[a-zA-Z0-9]{8}'
   generate: expression
@@ -190,4 +191,3 @@ parameters:
   name: VOLUME_CAPACITY
   value: 10Gi
   required: true
-
