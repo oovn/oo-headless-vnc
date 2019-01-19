@@ -231,7 +231,7 @@ objects:
             failureThreshold: 3
       volumeMounts:
         - name: ${APPLICATION_NAME}
-          mountPath: /home
+          mountPath: /
       volumes:
         - name: ${APPLICATION_NAME}
           persistentVolumeClaim:
