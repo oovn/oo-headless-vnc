@@ -4,23 +4,23 @@ labels:
   template: headless-vnc-run
 metadata:
   annotations:
-    description: Headless VNC run
+    description: Headless VNC Run
     iconClass: icon-beaker
     tags: headless,vnc,consol
     version: 1.0.3
   creationTimestamp: null
   name: headless-vnc-run
 objects:
-- apiVersion: "v1"
-  kind: "PersistentVolumeClaim"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
   metadata:
-    name: "${APPLICATION_NAME}"
+    name: ${APPLICATION_NAME}
   spec:
     accessModes:
-      - "ReadWriteOnce"
+      - ReadWriteOnce
     resources:
       requests:
-        storage: "${VOLUME_CAPACITY}"
+        storage: ${VOLUME_CAPACITY}
 - apiVersion: v1
   kind: Service
   metadata:
@@ -119,7 +119,7 @@ parameters:
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: 'Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>'
+- description: Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>
   name: HOSTNAME_HTTP
 - description: Headless vnc image
   name: IMAGE
@@ -131,7 +131,7 @@ labels:
   template: headless-vnc-run
 metadata:
   annotations:
-    description: Headless VNC (only run)
+    description: Headless VNC Run
     iconClass: icon-beaker
     tags: headless,vnc,consol
     version: 1.0.3
@@ -232,7 +232,6 @@ objects:
       volumeMounts:
         - name: ${APPLICATION_NAME}
           mountPath: /home
-          
       volumes:
         - name: ${APPLICATION_NAME}
           persistentVolumeClaim:
@@ -244,7 +243,7 @@ parameters:
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: 'Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>'
+- description: Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>
   name: HOSTNAME_HTTP
 - description: Headless vnc image
   name: IMAGE

@@ -11,16 +11,16 @@ metadata:
   creationTimestamp: null
   name: headless-vnc-build-and-run
 objects:
-- apiVersion: "v1"
-  kind: "PersistentVolumeClaim"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
   metadata:
-    name: "${APPLICATION_NAME}"
+    name: ${APPLICATION_NAME}
   spec:
     accessModes:
-      - "ReadWriteOnce"
+      - ReadWriteOnce
     resources:
       requests:
-        storage: "${VOLUME_CAPACITY}"
+        storage: ${VOLUME_CAPACITY}
 - apiVersion: v1
   kind: Service
   metadata:
@@ -145,7 +145,6 @@ objects:
       volumeMounts:
         - name: ${APPLICATION_NAME}
           mountPath: /home
-          
       volumes:
         - name: ${APPLICATION_NAME}
           persistentVolumeClaim:
@@ -165,8 +164,7 @@ parameters:
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: <application-name>-<project>.<default-domain-suffix>'
+- description: Custom hostname for http service route. Blank for default hostname,e.g.<app>-<project>.<domain>
   name: HOSTNAME_HTTP
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
@@ -174,7 +172,7 @@ parameters:
   value: https://github.com/oovn/oo-headless-vnc.git
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
-  value: "master"
+  value: master
 - description: Name of the Dockerfile for e.g. Dockerfile.ubuntu.xfce.vnc
   name: SOURCE_DOCKERFILE
   value: Dockerfile.ubuntu.xfce.vnc
