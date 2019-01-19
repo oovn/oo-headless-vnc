@@ -11,6 +11,16 @@ metadata:
   creationTimestamp: null
   name: headless-vnc-build-and-run
 objects:
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
+  metadata:
+    name: "${APPLICATION_NAME}"
+  spec:
+    accessModes:
+      - "ReadWriteOnce"
+    resources:
+      requests:
+        storage: "${VOLUME_CAPACITY}"
 - apiVersion: v1
   kind: Service
   metadata:
@@ -134,7 +144,7 @@ objects:
             failureThreshold: 3
       volumeMounts:
         -
-          mountPath: /
+          mountPath: /home
           name: ${APPLICATION_NAME}
       volumes:
         - name: ${APPLICATION_NAME}
@@ -165,7 +175,7 @@ parameters:
 - description: Git branch/tag reference
   name: SOURCE_REPOSITORY_REF
   value: "master"
-- description: Name of the Dockerfile for example Dockerfile.ubuntu.xfce.vnc, Dockerfile.centos.icewm.vnc, Dockerfile.ubuntu.icewm.vnc or Dockerfile.centos.xfce.vnc
+- description: Name of the Dockerfile for e.g. Dockerfile.ubuntu.xfce.vnc
   name: SOURCE_DOCKERFILE
   value: Dockerfile.ubuntu.xfce.vnc
 - description: GitHub trigger secret
@@ -178,3 +188,8 @@ parameters:
   generate: expression
   name: GENERIC_WEBHOOK_SECRET
   required: true
+- description: Volume space available for data, e.g. 512Mi, 2Gi.
+  name: VOLUME_CAPACITY
+  value: 10Gi
+  required: true
+
