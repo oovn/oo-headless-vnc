@@ -4,7 +4,7 @@ set -e
 
 apt-get update 
 echo "Install some common tools for further installation"
-apt-get install -y --no-install-recommends vim wget curl snap net-tools locales bzip2 \
+apt-get install -y --no-install-recommends vim wget snap net-tools locales bzip2 \
     python-numpy #used for websockify/novnc
 
 echo "Installing ttf-wqy-zenhei"
