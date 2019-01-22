@@ -1,18 +1,14 @@
 [Desktop Entry]
-Name=@@NAME_LONG@@
+Name=Virual Studio
 Comment=Code Editing. Redefined.
 GenericName=Text Editor
-Exec=/usr/share/@@NAME@@/@@NAME@@ --unity-launch %F
-Icon=@@ICON@@
+Exec=/usr/share/code/code --unity-launch %F
+Icon=/usr/share/pixmaps/code.png
 Type=Application
 StartupNotify=true
-StartupWMClass=@@NAME_SHORT@@
+StartupWMClass=vscode
 Categories=Utility;TextEditor;Development;IDE;
 MimeType=text/plain;inode/directory;
 Actions=new-empty-window;
 Keywords=vscode;
 
-[Desktop Action new-empty-window]
-Name=New Empty Window
-Exec=/usr/share/@@NAME@@/@@NAME@@ --new-window %F
-Icon=@@ICON@@
