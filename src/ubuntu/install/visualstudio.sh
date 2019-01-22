@@ -6,5 +6,5 @@ set -u
 echo "Install Visual Studio"
 
 wget -O /tmp/visualstudio.deb https://go.microsoft.com/fwlink/?LinkID=760868
-dpkg -i /tmp/visualstudio.deb
+apt-get install -f /tmp/visualstudio.deb
 rm -fr /tmp/visualstudio.deb
