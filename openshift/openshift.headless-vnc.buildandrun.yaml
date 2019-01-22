@@ -111,7 +111,14 @@ objects:
           deploymentConfig: ${APPLICATION_NAME}
         name: ${APPLICATION_NAME}
       spec:
+        volumes:
+        - name: volume-1
+          persistentVolumeClaim:
+            claimName: "${APPLICATION_NAME}"
         containers:
+      	  volumeMounts:
+            - name: volume-1
+              mountPath: /headless
         - name: ${APPLICATION_NAME}
           image: ${APPLICATION_NAME}
           imagePullPolicy: Always
@@ -142,13 +149,6 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
-      volumeMounts:
-        - name: ${APPLICATION_NAME}
-          mountPath: /
-      volumes:
-        - name: ${APPLICATION_NAME}
-          persistentVolumeClaim:
-            claimName: ${APPLICATION_NAME}
     triggers:
     - imageChangeParams:
         automatic: true
@@ -164,8 +164,7 @@ parameters:
   name: APPLICATION_NAME
   required: true
   value: headless-vnc
-- description: 'Custom hostname for http service route.  Leave blank for default hostname,
-    e.g.: <application-name>-<project>.<default-domain-suffix>'
+- description: 'Custom hostname for http service route.<app>-<project>.<domain>'
   name: HOSTNAME_HTTP
 - description: Git source URI for application
   name: SOURCE_REPOSITORY_URL
