@@ -112,6 +112,9 @@ objects:
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 3
+          resources:
+            limits:
+              memory: "${MEMORY_LIMIT}"
       volumeMounts:
         - name: ${APPLICATION_NAME}
           mountPath: /
@@ -121,6 +124,7 @@ objects:
             claimName: ${APPLICATION_NAME}
     triggers:
     - type: ConfigChange
+
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
