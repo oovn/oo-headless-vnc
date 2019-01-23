@@ -2,9 +2,6 @@
 ### every exit != 0 fails the script
 set -e
 
-echo "Install Snap"
-apt-get update 
-apt-get install -y snap
-apt-get clean -y
+echo "Snap Install Android Studio"
 
-snap install android-studio --classic
+snap install -y android-studio --classic
